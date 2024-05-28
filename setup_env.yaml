@@ -1,0 +1,35 @@
+name: st_project
+channels:
+  - apple
+  - defaults
+  - conda-forge
+  - anaconda
+dependencies:
+  - python
+  - pip
+  - jupyter
+  - scikit-learn
+  - scipy
+  - pandas
+  - pandas-datareader
+  - numpy
+  - matplotlib
+  - seaborn
+  - pillow
+  - tqdm
+  - requests
+  - h5py
+  - pyyaml
+  - flask
+  - ipykernel
+  - openjdk
+  - pyspark
+  - pip:
+    - anndata
+    - scanpy
+    - scikit-misc
+    - fastcluster
+    - leidenalg
+    - scvi-tools
+    - gdown
+    - bbknn
