@@ -27,9 +27,11 @@ dependencies:
   - pip:
     - anndata
     - scanpy
+    - gseapy
     - scikit-misc
     - fastcluster
     - leidenalg
     - scvi-tools
     - gdown
     - bbknn
+    - supervenn
