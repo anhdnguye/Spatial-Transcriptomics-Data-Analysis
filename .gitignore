@@ -5,3 +5,4 @@ raw_counts/
 spatial_coord/
 Raw_Initial_Data/
 results/
+__pycache__/
