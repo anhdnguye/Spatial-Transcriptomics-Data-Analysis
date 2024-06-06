@@ -4,8 +4,9 @@ channels:
   - defaults
   - conda-forge
   - anaconda
+  - pytorch
 dependencies:
-  - python
+  - python=3.12.3
   - pip
   - jupyter
   - scikit-learn
@@ -13,8 +14,8 @@ dependencies:
   - pandas
   - pandas-datareader
   - numpy
-  - matplotlib
-  - seaborn
+  - matplotlib=3.8.4
+  - seaborn=0.13.2
   - pillow
   - tqdm
   - requests
@@ -27,11 +28,12 @@ dependencies:
   - pip:
     - anndata
     - scanpy
+    - squidpy
     - gseapy
     - scikit-misc
     - fastcluster
     - leidenalg
-    - scvi-tools
+    - scvi-tools=1.1.2
     - gdown
     - bbknn
     - supervenn

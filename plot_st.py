@@ -1,4 +1,4 @@
-import pandas as ps
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -104,19 +104,58 @@ def QC_plot(adata):
     plt.show()
 
 
-def plt_umap (adata, obs):
+def plt_umap_cluster (adata):
     color_code = dict(zip(range(0, 10), plt.cm.tab10(range(0, 10))))
     plt.figure(figsize=(10,8))
     frame1 = plt.gca()
     frame1.axes.get_xaxis().set_ticks([])
     frame1.axes.get_yaxis().set_ticks([])
-    plt.scatter(adata.obsm['X_umap'][:, 0],
-                adata.obsm['X_umap'][:, 1],
-                c=adata.obs[obs].astype(int).map(color_code))
+    for g in np.unique(adata.obs['clusters']):
+        plt.scatter(adata[adata.obs['clusters'] == g].obsm['X_umap'][:, 0],
+                    adata[adata.obs['clusters'] == g].obsm['X_umap'][:, 1],
+                    color=adata[adata.obs['clusters'] == g].obs['clusters'].astype(int).map(color_code),
+                    label=g)
     plt.xlabel('UMAP_1')
     plt.ylabel('UMAP_2')
     plt.legend()
     plt.show()
+
+
+def plt_spatial_cluster (adata, sample_code : str, sample_name : str):
+    '''
+    This function takes 3 arguments:
+    adata : the annotated data container
+    sample_code : one of these sample codes: M24, F31, M63, F62
+    sample_name : the name of the sample: 0_Per_1_M24, 0_Per_2_F31, CTL_1_M63, CTL_2_F62
+    '''
+    color_code = dict(zip(range(0, 10), plt.cm.tab10(range(0, 10))))
+    img = plt.imread(adata.uns['lung_image_' + sample_code])
+    fig, ax = plt.subplots()
+    ax.imshow(img, extent=adata.uns['extent_' + sample_code])
+    plt.scatter(adata[adata.obs['sample'] == sample_name].obsm['spatial'][:,0],
+                adata[adata.obs['sample'] == sample_name].obsm['spatial'][:,1],
+                s=10,
+                c=adata[adata.obs['sample'] == sample_name].obs['clusters'].astype(int).map(color_code))
+    ax.invert_yaxis()
+    for axis in ['bottom', 'left', 'top', 'right']:
+            ax.spines[axis].set_visible(False)
+
+    plt.tick_params(
+        axis='x',
+        which='both',
+        bottom=False,
+        top=False,
+        labelbottom=False)
+
+    plt.tick_params(
+        axis='y',
+        which='both',
+        left=False,
+        right=False,
+        labelleft=False)
+
+    ax.set_xlabel('Spatial_1')
+    ax.set_ylabel('Spatial_2')
 
 
 def plt_umap_sample (adata):
@@ -124,18 +163,14 @@ def plt_umap_sample (adata):
     frame1 = plt.gca()
     frame1.axes.get_xaxis().set_ticks([])
     frame1.axes.get_yaxis().set_ticks([])
-    sample1 = plt.scatter(adata[adata.obs['sample'] == '0_Per_1_M24'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['sample'] == '0_Per_1_M24'].obsm['X_umap'][:, 1],
-                          color=plt.cm.tab20b(range(0,20)[12]), label='0_Per_1_M24')
-    sample2 = plt.scatter(adata[adata.obs['sample'] == '0_Per_2_F31'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['sample'] == '0_Per_2_F31'].obsm['X_umap'][:, 1],
-                          color=plt.cm.tab20b(range(0,20)[15]), label='0_Per_2_F31')
-    sample3 = plt.scatter(adata[adata.obs['sample'] == 'CTL_1_M63'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['sample'] == 'CTL_1_M63'].obsm['X_umap'][:, 1],
-                          color=plt.cm.tab20b(range(0,20)[8]), label='CTL_1_M63')
-    sample4 = plt.scatter(adata[adata.obs['sample'] == 'CTL_2_F62'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['sample'] == 'CTL_2_F62'].obsm['X_umap'][:, 1],
-                          color=plt.cm.tab20b(range(0,20)[11]), label='CTL_2_F62')
+    sample_color_code = {'0_Per_1_M24' : plt.cm.tab20b(range(0,20)[12]),
+                         '0_Per_2_F31' : plt.cm.tab20b(range(0,20)[15]),
+                         'CTL_1_M63' : plt.cm.tab20b(range(0,20)[8]),
+                         'CTL_2_F62' : plt.cm.tab20b(range(0,20)[11])}
+    for s in np.unique(adata.obs['sample']):
+        plt.scatter(adata[adata.obs['sample'] == s].obsm['X_umap'][:, 0],
+                    adata[adata.obs['sample'] == s].obsm['X_umap'][:, 1],
+                    color=sample_color_code[s], label=s)
     plt.xlabel('UMAP_1')
     plt.ylabel('UMAP_2')
     plt.legend()
@@ -147,12 +182,12 @@ def plt_umap_sex (adata):
     frame1 = plt.gca()
     frame1.axes.get_xaxis().set_ticks([])
     frame1.axes.get_yaxis().set_ticks([])
-    sample1 = plt.scatter(adata[adata.obs['sex'] == 'female'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['sex'] == 'female'].obsm['X_umap'][:, 1],
-                          color=plt.cm.Accent(range(0,20)[5]), label='Female')
-    sample2 = plt.scatter(adata[adata.obs['sex'] == 'male'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['sex'] == 'male'].obsm['X_umap'][:, 1],
-                          color=plt.cm.tab20b(range(0,20)[6]), label='Male')
+    sex_color_code = {'female' : plt.cm.Accent(range(0,20)[5]),
+                      'male' : plt.cm.tab20b(range(0,20)[6])}
+    for s in np.unique(adata.obs['sex']):
+        plt.scatter(adata[adata.obs['sex'] == s].obsm['X_umap'][:, 0],
+                    adata[adata.obs['sex'] == s].obsm['X_umap'][:, 1],
+                    color=sex_color_code[s], label=s)
     plt.xlabel('UMAP_1')
     plt.ylabel('UMAP_2')
     plt.legend()
@@ -164,13 +199,79 @@ def plt_umap_condition (adata):
     frame1 = plt.gca()
     frame1.axes.get_xaxis().set_ticks([])
     frame1.axes.get_yaxis().set_ticks([])
-    sample1 = plt.scatter(adata[adata.obs['lung'] == 'Z_Per'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['lung'] == 'Z_Per'].obsm['X_umap'][:, 1],
-                          color=plt.cm.tab20b(range(0,20)[17]), label='Z_Per')
-    sample2 = plt.scatter(adata[adata.obs['lung'] == 'CTL'].obsm['X_umap'][:, 0],
-                          adata[adata.obs['lung'] == 'CTL'].obsm['X_umap'][:, 1],
-                          color=plt.cm.tab20c(range(0,20)[9]), label='CTL')
+    lung_color_code = {'Z_Per' : plt.cm.tab20b(range(0,20)[17]),
+                      'CTL' : plt.cm.tab20c(range(0,20)[9])}
+    for l in np.unique(adata.obs['lung']):
+        plt.scatter(adata[adata.obs['lung'] == l].obsm['X_umap'][:, 0],
+                    adata[adata.obs['lung'] == l].obsm['X_umap'][:, 1],
+                    color=lung_color_code[l], label=l)
     plt.xlabel('UMAP_1')
     plt.ylabel('UMAP_2')
     plt.legend()
     plt.show()
+
+
+def plt_proportion (adata):
+    dict1 = dict(adata[adata.obs['sample'] == '0_Per_1_M24'].obs['clusters'].value_counts(normalize=True) * 100)
+    dict2 = dict(adata[adata.obs['sample'] == '0_Per_2_F31'].obs['clusters'].value_counts(normalize=True) * 100)
+    dict3 = dict(adata[adata.obs['sample'] == 'CTL_1_M63'].obs['clusters'].value_counts(normalize=True) * 100)
+    dict4 = dict(adata[adata.obs['sample'] == 'CTL_2_F62'].obs['clusters'].value_counts(normalize=True) * 100)
+
+    df = pd.DataFrame({'Vaped_Male' : dict1,
+                   'Vaped_Female' : dict2,
+                   'Non-Vaped_Male' : dict3,
+                   'Non-Vaped_Female' : dict4}).T
+    df = df.fillna(0)
+    df = df[['0', '1', '2', '3',
+            '4', '5', '6', '7']]
+    ax = df.plot.barh(
+        stacked = True,
+        title = 'Proportion of Clusters')
+    ax.legend(bbox_to_anchor=(1,1), loc="upper left")
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.get_xaxis().set_visible(False)
+
+
+def plt_volcano_clt (adata, p_value=0.05):
+  cats = adata.obs['clusters'].cat.categories
+  full_de_res = adata.uns['cluster_markers'].copy()
+  full_de_res['log10_pscore'] = -np.log10(full_de_res['proba_not_de'])
+  full_de_res = full_de_res.join(adata.var, how='inner')
+
+  for c in cats:
+    de_per_cluster = full_de_res.loc[full_de_res['group1'] == c]
+    plt.figure(figsize = (6,6))
+
+    ax = sns.scatterplot(data=de_per_cluster, x='lfc_mean', y='log10_pscore',
+                         color=plt.cm.tab10(int(c)),
+                         edgecolor=plt.cm.tab10(int(c)))
+    FDR_cutoff = -np.log10(p_value)
+    ax.axhline(FDR_cutoff, zorder = 0, c = 'k', lw = 2, ls = '--')
+    ax.axvline(1, zorder = 0, c = 'k', lw = 2, ls = '--')
+    ax.axvline(-1, zorder = 0, c = 'k', lw = 2, ls = '--')
+
+    for axis in ['bottom', 'left']:
+        ax.spines[axis].set_linewidth(2)
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    ax.tick_params(width = 0)
+
+    plt.xticks(size = 10, weight = 'bold')
+    plt.yticks(size = 10, weight = 'bold')
+
+    plt.xlabel('$log_{2}$ fold change', size = 30)
+    plt.ylabel('$-log_{10}$ FDR', size = 30)
+    plt.title('cluster_' + c, fontsize=25)
+
+    ax.xaxis.set_tick_params(labelsize=30, which='major')
+    ax.yaxis.set_tick_params(labelsize=30, which='major')
+
+    plt.show()
+
+
+
