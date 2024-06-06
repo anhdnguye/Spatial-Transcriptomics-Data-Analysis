@@ -273,5 +273,3 @@ def plt_volcano_clt (adata, p_value=0.05):
 
     plt.show()
 
-
-
