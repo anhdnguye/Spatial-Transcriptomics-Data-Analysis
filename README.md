@@ -31,6 +31,6 @@ A[Preprocessing.ipynb] --> B[Data-Preparation.ipynb]
 B --> C[Morans-I.ipynb]
 B --> D[Machine-Learning.ipynb]
 B --> E[Clustering-Analysis.ipynb]
-B --> F[Network-Analysis.ipynb]
+E --> F[Network-Analysis.ipynb]
 ```
 
