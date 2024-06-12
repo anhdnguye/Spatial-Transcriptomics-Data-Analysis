@@ -57,6 +57,7 @@ def total_plot(adata, lstGenes=[]):
     ax.invert_yaxis()
 
     ax.axis('off')
+    ax.set_title(', '.join(lstGenes))
     ax.set_xlabel('Spatial_1')
     ax.set_ylabel('Spatial_2')
     plt.colorbar(label='Expression')
