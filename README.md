@@ -9,7 +9,7 @@ We used [miniconda3](https://docs.anaconda.com/free/miniconda/) as the package m
 Change working direcotry to the local repo and create an environment from the ```setup_env.yaml``` file by running
 
 ```
-conda env create -f setup_env.yaml
+$ conda env create -f setup_env.yaml
 ```
 
 One can start Jupyter Notebook by running ```code .``` if using VS Code or ```jupyter notebook``` to launch the notebook locally.
@@ -34,3 +34,4 @@ B --> E[Clustering-Analysis.ipynb]
 E --> F[Network-Analysis.ipynb]
 ```
 
+In each notebook, I included a ```root_dict``` variable as the root directory, make sure to change that to your root directory.
