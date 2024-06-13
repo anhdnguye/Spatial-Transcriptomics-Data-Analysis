@@ -23,7 +23,7 @@ dependencies:
   - pip:
     - anndata
     - scanpy
-    - gseapy
+    - gseapy=1.16.0
     - scikit-misc
     - fastcluster
     - leidenalg
