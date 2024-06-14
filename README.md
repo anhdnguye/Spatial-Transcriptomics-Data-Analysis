@@ -25,7 +25,7 @@ The gene counts and spatial coordinates are stored in ```raw_counts``` and ```sp
 In order to replicate the entire thesis, one should run the notebooks in this order.
 
 ```mermaid
-graph LR
+graph TD
 
 A[Preprocessing.ipynb] --> B[Data-Preparation.ipynb]
 B --> C[Morans-I.ipynb]
