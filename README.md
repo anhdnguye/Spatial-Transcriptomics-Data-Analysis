@@ -31,7 +31,8 @@ A[Preprocessing.ipynb] --> B[Data-Preparation.ipynb]
 B --> C[Morans-I.ipynb]
 B --> D[Machine-Learning.ipynb]
 B --> E[Clustering-Analysis.ipynb]
-E --> F[Network-Analysis.ipynb]
+E --> F[Gene-Set-Enrichment-Analysis.ipynb]
+F --> G[Network-Analysis.ipynb]
 ```
 
 In each notebook, I included a ```root_dict``` variable as the root directory, make sure to change that to your root directory.
