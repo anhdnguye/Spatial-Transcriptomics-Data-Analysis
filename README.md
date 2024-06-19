@@ -35,4 +35,4 @@ E --> F[Gene-Set-Enrichment-Analysis.ipynb]
 F --> G[Network-Analysis.ipynb]
 ```
 
-In each notebook, I included a ```root_dict``` variable as the root directory, make sure to change that to your root directory.
+In each notebook, I included a ```root_dict``` variable to store the root directory, make sure to change that to your root directory.
