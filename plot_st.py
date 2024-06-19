@@ -5,6 +5,10 @@ import seaborn as sns
 
 
 def spatial(adata):
+    '''
+    This function displays scatter plot in spatial coordinates.
+    adata : Annotated data matrix.
+    '''
     img = plt.imread(adata.uns['lung_image'])
     fig, ax = plt.subplots()
     ax.imshow(img, extent=adata.uns['extent'])
@@ -18,6 +22,10 @@ def spatial(adata):
 
 
 def spatial_macrophage (adata):
+    '''
+    This function displays scatter plot of the macrophage spots in spatial coordinates.
+    adata : Annotated data matrix.
+    '''
     macrophage_markers = ['Cd14', 'Cd68', 'Adgre1']
     mask1 = np.isin(adata.var_names, macrophage_markers)
     total_counts = np.array(adata.X[:, mask1].sum(axis=1))
@@ -40,6 +48,12 @@ def spatial_macrophage (adata):
 
 
 def total_plot(adata, lstGenes=[]):
+    '''
+    This function displays the total expression of spots in spatial coordinates. If lstGenes is provided,
+    the function will find the total of expression of the given genes.
+    adata : Annotated data matrix.
+    lstGenes : list of genes
+    '''
     if len(lstGenes) > 0:
         mask = np.isin(adata.var_names, lstGenes)
         total_counts = np.array(adata.X[:, mask].sum(axis=1))
@@ -81,6 +95,14 @@ def gene_count_plot(adata):
 
 
 def QC_plot(adata):
+    '''
+    This function plots 4 basic Quality Control plots.
+    1. Distribution of total expression
+    2. Distribution of number of genes in each spot
+    3. Rank the spots by the total expression
+    4. Scatter plot of total expression and number of genes in a spot, colored by the percentage of mitochondrial
+    adata : Annotated data matrix.
+    '''
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(15, 10))
 
     p1 = sns.histplot(adata.obs['total_counts'], kde=True, ax=axes[0, 0])
@@ -106,6 +128,10 @@ def QC_plot(adata):
 
 
 def plt_umap_cluster (adata):
+    '''
+    Plot the UMAP representation, colored by cluster.
+    adata : Annotated data matrix.
+    '''
     color_code = dict(zip(range(0, 10), plt.cm.tab10(range(0, 10))))
     plt.figure(figsize=(10,8))
     frame1 = plt.gca()
@@ -160,6 +186,10 @@ def plt_spatial_cluster (adata, sample_code : str, sample_name : str):
 
 
 def plt_umap_sample (adata):
+    '''
+    Plot the UMAP representation, colored by sample.
+    adata : Annotated data matrix.
+    '''
     plt.figure(figsize=(10,8))
     frame1 = plt.gca()
     frame1.axes.get_xaxis().set_ticks([])
@@ -179,6 +209,10 @@ def plt_umap_sample (adata):
 
 
 def plt_umap_sex (adata):
+    '''
+    Plot the UMAP representation, colored by sex.
+    adata : Annotated data matrix.
+    '''
     plt.figure(figsize=(10,8))
     frame1 = plt.gca()
     frame1.axes.get_xaxis().set_ticks([])
@@ -196,6 +230,10 @@ def plt_umap_sex (adata):
 
 
 def plt_umap_condition (adata):
+    '''
+    Plot the UMAP representation, colored by condition.
+    adata : Annotated data matrix.
+    '''
     plt.figure(figsize=(10,8))
     frame1 = plt.gca()
     frame1.axes.get_xaxis().set_ticks([])
@@ -213,15 +251,19 @@ def plt_umap_condition (adata):
 
 
 def plt_proportion (adata):
+    '''
+    Plot the cluster proportion in each sample.
+    adata : Annotated data matrix.
+    '''
     dict1 = dict(adata[adata.obs['sample'] == '0_Per_1_M24'].obs['clusters'].value_counts(normalize=True) * 100)
     dict2 = dict(adata[adata.obs['sample'] == '0_Per_2_F31'].obs['clusters'].value_counts(normalize=True) * 100)
     dict3 = dict(adata[adata.obs['sample'] == 'CTL_1_M63'].obs['clusters'].value_counts(normalize=True) * 100)
     dict4 = dict(adata[adata.obs['sample'] == 'CTL_2_F62'].obs['clusters'].value_counts(normalize=True) * 100)
 
     df = pd.DataFrame({'Vaped_Male' : dict1,
-                   'Vaped_Female' : dict2,
-                   'Non-Vaped_Male' : dict3,
-                   'Non-Vaped_Female' : dict4}).T
+                       'Vaped_Female' : dict2,
+                       'Non-Vaped_Male' : dict3,
+                       'Non-Vaped_Female' : dict4}).T
     df = df.fillna(0)
     df = df[['0', '1', '2', '3',
             '4', '5', '6', '7']]
@@ -237,40 +279,44 @@ def plt_proportion (adata):
 
 
 def plt_volcano_clt (adata, p_value=0.05):
-  cats = adata.obs['clusters'].cat.categories
-  full_de_res = adata.uns['cluster_markers'].copy()
-  full_de_res['log10_pscore'] = -np.log10(full_de_res['proba_not_de'])
-  full_de_res = full_de_res.join(adata.var, how='inner')
+    '''
+    Plot the volcano plot for each cluster.
+    adata : Annotated data matrix.
+    p_value : level of cutoff p_value
+    '''
+    cats = adata.obs['clusters'].cat.categories
+    full_de_res = adata.uns['cluster_markers'].copy()
+    full_de_res['log10_pscore'] = -np.log10(full_de_res['proba_not_de'])
+    full_de_res = full_de_res.join(adata.var, how='inner')
 
-  for c in cats:
-    de_per_cluster = full_de_res.loc[full_de_res['group1'] == c]
-    plt.figure(figsize = (6,6))
+    for c in cats:
+        de_per_cluster = full_de_res.loc[full_de_res['group1'] == c]
+        plt.figure(figsize = (6,6))
 
-    ax = sns.scatterplot(data=de_per_cluster, x='lfc_mean', y='log10_pscore',
-                         color=plt.cm.tab10(int(c)),
-                         edgecolor=plt.cm.tab10(int(c)))
-    FDR_cutoff = -np.log10(p_value)
-    ax.axhline(FDR_cutoff, zorder = 0, c = 'k', lw = 2, ls = '--')
-    ax.axvline(1, zorder = 0, c = 'k', lw = 2, ls = '--')
-    ax.axvline(-1, zorder = 0, c = 'k', lw = 2, ls = '--')
+        ax = sns.scatterplot(data=de_per_cluster, x='lfc_mean', y='log10_pscore',
+                            color=plt.cm.tab10(int(c)),
+                            edgecolor=plt.cm.tab10(int(c)))
+        FDR_cutoff = -np.log10(p_value)
+        ax.axhline(FDR_cutoff, zorder = 0, c = 'k', lw = 2, ls = '--')
+        ax.axvline(1, zorder = 0, c = 'k', lw = 2, ls = '--')
+        ax.axvline(-1, zorder = 0, c = 'k', lw = 2, ls = '--')
 
-    for axis in ['bottom', 'left']:
-        ax.spines[axis].set_linewidth(2)
+        for axis in ['bottom', 'left']:
+            ax.spines[axis].set_linewidth(2)
 
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
 
-    ax.tick_params(width = 0)
+        ax.tick_params(width = 0)
 
-    plt.xticks(size = 10, weight = 'bold')
-    plt.yticks(size = 10, weight = 'bold')
+        plt.xticks(size = 10, weight = 'bold')
+        plt.yticks(size = 10, weight = 'bold')
 
-    plt.xlabel('$log_{2}$ fold change', size = 30)
-    plt.ylabel('$-log_{10}$ FDR', size = 30)
-    plt.title('cluster_' + c, fontsize=25)
+        plt.xlabel('$log_{2}$ fold change', size = 30)
+        plt.ylabel('$-log_{10}$ FDR', size = 30)
+        plt.title('cluster_' + c, fontsize=25)
 
-    ax.xaxis.set_tick_params(labelsize=30, which='major')
-    ax.yaxis.set_tick_params(labelsize=30, which='major')
+        ax.xaxis.set_tick_params(labelsize=30, which='major')
+        ax.yaxis.set_tick_params(labelsize=30, which='major')
 
-    plt.show()
-
+        plt.show()
