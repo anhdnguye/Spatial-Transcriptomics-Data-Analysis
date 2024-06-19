@@ -10,7 +10,7 @@ dependencies:
   - jupyter
   - scikit-learn
   - scipy
-  - pandas
+  - pandas=2.2.1
   - numpy
   - matplotlib=3.8.4
   - seaborn=0.13.2
@@ -21,6 +21,7 @@ dependencies:
   - ipykernel
   - squidpy
   - pip:
+    - networkx=3.3
     - anndata
     - scanpy
     - gseapy=1.16.0
@@ -31,3 +32,4 @@ dependencies:
     - gdown
     - bbknn
     - supervenn
+    - tabulate
