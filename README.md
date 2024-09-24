@@ -1,6 +1,6 @@
 # Spatial Transcriptiomics Data Analysis
 
-This repo is a codebase of "Spatial Transcriptomic Analysis of Macrophage Alterations in Vaping-Associated Pulmonary Injury" thesis. By following the below instruction thoroughly, one can reproduce all of the results and plots that were generated in the thesis.
+This repo is a codebase of ["Spatial Transcriptomic Analysis of Macrophage Alterations in Vaping-Associated Pulmonary Injury"](https://digitalcollections.sdsu.edu/do/9e115129-3ab8-44b5-967a-aaf6d64638f4) thesis. By following the below instruction thoroughly, one can reproduce all of the results and plots that were generated in the thesis.
 
 ## Setting up the environment
 
